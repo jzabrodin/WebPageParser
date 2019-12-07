@@ -1,0 +1,14 @@
+{
+  "name": "yevgen-zabrodin/web-page-parser",
+  "description": "simple web-page parser",
+  "type": "project",
+  "require": {
+    "phpunit/phpunit": "^8.4"
+  },
+  "authors": [
+    {
+      "name": "yevgen",
+      "email": "jzabrodin@gmail.com"
+    }
+  ]
+}

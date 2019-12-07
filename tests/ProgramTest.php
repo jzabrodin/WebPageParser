@@ -1,0 +1,21 @@
+<?php
+
+//require_once __DIR__ . '/../Parser.php';
+require_once __DIR__ . '/../Report.php';
+
+
+class RunnerTest extends PHPUnit\Framework\TestCase
+{
+
+    /** @test
+     * @return void
+     * report
+     */
+    public function report()
+    {
+        $report = new Report('netpeak');
+        $report->printReport();
+    }
+
+
+}
