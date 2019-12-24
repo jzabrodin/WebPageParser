@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/Runner.php';
+require_once __DIR__ . '/../Runner.php';
 require_once __DIR__ . '/Report.php';
 
 class Parser

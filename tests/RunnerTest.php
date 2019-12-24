@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../Runner.php';
-require_once __DIR__ . '/../Files.php';
+require_once __DIR__ . '/../src/Files.php';
 
 
 class RunnerTest extends PHPUnit\Framework\TestCase
@@ -64,7 +64,7 @@ class RunnerTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 

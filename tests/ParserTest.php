@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../parsers/ImageParser.php';
-require_once __DIR__ . '/../parsers/ParserInterface.php';
-require_once __DIR__ . '/../parsers/LinksParser.php';
+require_once __DIR__ . '/../src/parsers/ImageParser.php';
+require_once __DIR__ . '/../src/parsers/ParserInterface.php';
+require_once __DIR__ . '/../src/parsers/LinksParser.php';
 
 class RunnerTest extends PHPUnit\Framework\TestCase
 {

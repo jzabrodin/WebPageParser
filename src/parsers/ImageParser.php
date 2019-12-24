@@ -19,6 +19,8 @@ class ImageParser implements ParserInterface
         // отсечем все картинки
         $exploded = explode('<img', $this->content);
 
+//        preg_grep('/(((href)|(src))=".{0,}((png)|(jpg)|(jpeg)))/',$this->content);
+        
         foreach ($exploded as $string) {
             // теперь справа
             $tag_data = explode('>', $string);

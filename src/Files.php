@@ -27,7 +27,7 @@ class Files
     private function getFileName(): string
     {
         $filename = $this->getBaseFilename();
-        return realpath(__DIR__ . '/storage/index_data/') . '/' . $filename;
+        return __DIR__ . '/storage/index_data/' . $filename;
     }
 
     /**
@@ -76,7 +76,7 @@ class Files
     private function getFileNameForResult(): string
     {
         $filename = $this->getBaseFilename();
-        return realpath(__DIR__ . '/storage/site_data/') . '/' . $filename . '_analyzed';
+        return __DIR__ . '/storage/site_data/' . $filename . '_analyzed';
     }
 
     /**
