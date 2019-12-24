@@ -27,7 +27,7 @@ class ImageParser implements ParserInterface
             // с помощью регулярки доберемся до содержимого
             foreach ($tag_data as $tag_description) {
                 $matches = [];
-                preg_match('/src=.{1,}/', $tag_description, $matches);
+                preg_match('/(((href)|(src))=".{0,}((png)|(jpg)|(jpeg)))/', $tag_description, $matches);
                 $this->getLinksFromTag($matches);
             }
         }
