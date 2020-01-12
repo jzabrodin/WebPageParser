@@ -31,17 +31,17 @@ class Runner
     {
 
         $this->checkURL();
-        $filesOperations = new Files($this->pageUrl);
+        $files_operations = new Files($this->pageUrl);
 
         $page_content = $this->getPageContent();
-        $filesOperations->savePageContent($page_content);
+        $files_operations->savePageContent($page_content);
 
         if ($page_content === false) {
             $this->showErrors();
         }
         $this->getDataFromParsers($page_content);
 
-        $filesOperations->save($this->result);
+        $files_operations->save($this->result);
 
     }
 
@@ -68,7 +68,8 @@ class Runner
     public function getPageContent()
     {
         $connection = $this->getConnection($this->pageUrl);
-        $page_content = curl_exec($connection);
+        list($page_content, $connection) = $this->handleRedirection($connection);
+
 
         if ($page_content === false) {
             $this->errors[] = curl_error($connection);
@@ -84,6 +85,7 @@ class Runner
     {
         $connection = curl_init($this->pageUrl);
         curl_setopt($connection, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($connection, CURLOPT_HEADER, true);
         return $connection;
     }
 
@@ -116,6 +118,30 @@ class Runner
         }
         return $parsed;
 
+    }
+
+    /**
+     * @param $connection
+     *
+     * @return array
+     */
+    private function handleRedirection($connection): array
+    {
+        $page_content = curl_exec($connection);
+
+        $code = curl_getinfo($connection, CURLINFO_HTTP_CODE);
+
+        $http_redirect_codes = [301, 302, 303, 307];
+        if (in_array($code, $http_redirect_codes, true)) {
+            preg_match('/\wocation:(.*?)\n/', $page_content, $matches);
+            curl_close($connection);
+            $first_url = array_pop($matches);
+            $new_url = trim($first_url);
+            $connection = $this->getConnection($new_url);
+            $page_content = curl_exec($connection);
+        }
+
+        return array($page_content, $connection);
     }
 
 }
