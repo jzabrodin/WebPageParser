@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/parsers/ImageParser.php';
-require_once __DIR__ . '/parsers/LinksParser.php';
-require_once __DIR__ . '/Files.php';
+require_once __DIR__.'/src/parsers/ImageParser.php';
+require_once __DIR__.'/src/parsers/LinksParser.php';
+require_once __DIR__.'/src/Files.php';
 
 class Runner
 {

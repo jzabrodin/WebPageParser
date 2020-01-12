@@ -1,71 +1,20 @@
 <?php
 
-require_once __DIR__ . '/ParserInterface.php';
+require_once __DIR__.'/ParserInterface.php';
+require_once __DIR__.'/BaseParser.php';
 
-class ImageParser implements ParserInterface
+class ImageParser extends BaseParser
 {
-    const name = 'Images';
     public $content;
-    private $result;
+    public $parser;
 
     public function __construct($content)
     {
-        $this->content = $content;
-        $this->result = array();
+        parent::__construct($content);
+        $this->tag_regex = '/<img .{0,1000}>/';
+        $this->src_regex = '/((href|src)=".{0,}((png)|(jpg)|(jpeg)))/';
+        $this->tag_replace_string = ['src=', 'href=', '"', '/>'];
+        $this->name = 'Images';
     }
 
-    public function parse()
-    {
-        // отсечем все картинки
-        $exploded = explode('<img', $this->content);
-
-//        preg_grep('/(((href)|(src))=".{0,}((png)|(jpg)|(jpeg)))/',$this->content);
-        
-        foreach ($exploded as $string) {
-            // теперь справа
-            $tag_data = explode('>', $string);
-            // с помощью регулярки доберемся до содержимого
-            foreach ($tag_data as $tag_description) {
-                $matches = [];
-                preg_match('/(((href)|(src))=".{0,}((png)|(jpg)|(jpeg)))/', $tag_description, $matches);
-                $this->getLinksFromTag($matches);
-            }
-        }
-
-        return count($this->result);
-    }
-
-    /**
-     * @param array $matches
-     */
-    public function getLinksFromTag(array $matches): void
-    {
-        foreach ($matches as $match) {
-            $url = str_replace('src=', '', $match);
-            if (!empty($url)) {
-                $explode = explode(' ', $url);
-                if (count($explode)) {
-                    $this->result[] = $explode[0];
-                }
-            }
-        }
-    }
-
-    public function showResult()
-    {
-        echo "\n--- Result of " . self::name . " parsing --- \n";
-        foreach ($this->result as $value) {
-            echo "$value \n";
-        }
-    }
-
-    public function getResult(): array
-    {
-        return $this->result;
-    }
-
-    public function getName(): string
-    {
-        return self::name;
-    }
 }

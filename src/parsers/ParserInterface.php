@@ -12,4 +12,9 @@ interface ParserInterface
     public function getResult();
 
     public function getName();
+
+    public function getLinksFromTag(array $matches);
+
+    public function validate($data);
+
 }

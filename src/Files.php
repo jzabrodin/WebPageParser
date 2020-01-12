@@ -14,10 +14,7 @@ class Files
 
     public function savePageContent($page_content)
     {
-        $file = fopen($this->getFileName(), 'wb');
-        $fwrite = fwrite($file, $page_content);
-        fclose($file);
-        return $fwrite;
+        return file_put_contents($this->getFileName(), $page_content);
     }
 
     /**
@@ -27,7 +24,8 @@ class Files
     private function getFileName(): string
     {
         $filename = $this->getBaseFilename();
-        return __DIR__ . '/storage/index_data/' . $filename;
+
+        return __DIR__.'/../storage/index_data/'.$filename;
     }
 
     /**
@@ -76,7 +74,8 @@ class Files
     private function getFileNameForResult(): string
     {
         $filename = $this->getBaseFilename();
-        return __DIR__ . '/storage/site_data/' . $filename . '_analyzed';
+
+        return __DIR__.'/../storage/site_data/'.$filename.'_analyzed';
     }
 
     /**
@@ -85,22 +84,18 @@ class Files
     private function saveSerializedData($result): void
     {
         $name_for_serialized = $this->getFileNameForSerialized();
-        $file = fopen($name_for_serialized, 'wb');
         $data = serialize($result);
-        fwrite($file, $data);
-        fclose($file);
+        file_put_contents($name_for_serialized, $data);
         echo "\n\n serialized data saved in : \n $name_for_serialized \n\n";
 
         $name_for_index = $this->getFileNameForIndex();
-        $file = fopen($name_for_index, 'wb');
         $data = serialize(
             [
                 'url' => $this->pageUrl,
                 'filename' => $name_for_serialized
             ]
         );
-        fwrite($file, $data);
-        fclose($file);
+        file_put_contents($name_for_index, $data);
 
     }
 
@@ -119,7 +114,7 @@ class Files
      */
     public static function getSerializedDataDirectory()
     {
-        return realpath(__DIR__ . '/storage/serialized_data/');
+        return dirname(__DIR__).'/storage/serialized_data/';
     }
 
     private function getFileNameForIndex()
@@ -133,7 +128,7 @@ class Files
      */
     public static function getIndexDataDirectory()
     {
-        return realpath(__DIR__ . '/storage/index_data/');
+        return dirname(__DIR__).'/storage/index_data/';
     }
 
 }

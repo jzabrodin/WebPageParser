@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../src/parsers/ImageParser.php';
-require_once __DIR__ . '/../src/parsers/ParserInterface.php';
-require_once __DIR__ . '/../src/parsers/LinksParser.php';
+require_once __DIR__.'/../src/parsers/ImageParser.php';
+require_once __DIR__.'/../src/parsers/ParserInterface.php';
+require_once __DIR__.'/../src/parsers/LinksParser.php';
 
 class RunnerTest extends PHPUnit\Framework\TestCase
 {
@@ -17,10 +17,12 @@ class RunnerTest extends PHPUnit\Framework\TestCase
     public function imageParserTest()
     {
 
-        $imageParser = new ImageParser($this->data_for_image_parser);
-        $parseResult = $imageParser->parse();
-        $this->assertTrue($parseResult > 0);
-        $imageParser->showResult();
+        $image_parser = new ImageParser($this->data_for_image_parser);
+        $parse_result = $image_parser->parse();
+        $result_size = count($parse_result);
+        $this->assertTrue($result_size > 0);
+        $this->assertEquals($result_size, 1);
+        $image_parser->showResult();
 
     }
 
@@ -49,6 +51,10 @@ class RunnerTest extends PHPUnit\Framework\TestCase
           </a>
           <button data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
             <img width="34" height="34" src="https://cdn.netpeak.net/img/new-design/mob-menu.png">
+          </button>
+          <button data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+            <img width="34" height="34" src="https://cdn.netpeak.net/img/new-design/mob-menu.js">
+            <img width="34" height="34" src="https://cdn.netpeak.net/img/new-design/mob-menu.css">
           </button>
         ';
 
