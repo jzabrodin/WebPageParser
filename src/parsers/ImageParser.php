@@ -8,12 +8,15 @@ class ImageParser extends BaseParser
     public $content;
     public $parser;
 
-    public function __construct($content)
+    public function __construct($url, $content)
     {
-        parent::__construct($content);
-        $this->tag_regex = '/<img .{0,1000}>/';
-        $this->src_regex = '/((href|src)=".{0,}((png)|(jpg)|(jpeg)))/';
-        $this->tag_replace_string = ['src=', 'href=', '"', '/>'];
+        parent::__construct($url, $content);
+        $this->src_regex = [
+                "/src=\".{0,}?\.png\"/",
+                "/src=\".{0,}?\.jpg\"/",
+                "/src=\".{0,}?\.jpeg\"/",
+        ];
+        $this->tag_replace_string = ['src=', '"'];
         $this->name = 'Images';
     }
 

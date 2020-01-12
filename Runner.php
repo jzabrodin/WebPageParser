@@ -39,7 +39,7 @@ class Runner
         if ($page_content === false) {
             $this->showErrors();
         }
-        $this->getDataFromParsers($page_content);
+        $this->getDataFromParsers($page_content, $this->pageUrl);
 
         $files_operations->save($this->result);
 
@@ -92,12 +92,12 @@ class Runner
     /**
      * @param $page_content
      */
-    private function getDataFromParsers($page_content): bool
+    private function getDataFromParsers(string $page_content, string $page_url): bool
     {
         $parsed = true;
         $parsers = [];
-        $parsers[] = new ImageParser($page_content);
-        $parsers[] = new LinksParser($page_content);
+        $parsers[] = new ImageParser($page_url, $page_content);
+        $parsers[] = new LinksParser($page_url, $page_content);
 
         foreach ($parsers as $parser) {
 
@@ -112,7 +112,7 @@ class Runner
         }
 
         if (count($parse_result) === 0) {
-            $this->errors[] = $page_content;
+            $this->errors[] = "parse result for $this->pageUrl is empty";
             $this->showErrors();
             $parsed = false;
         }

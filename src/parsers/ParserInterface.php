@@ -3,7 +3,7 @@
 
 interface ParserInterface
 {
-    public function __construct($content);
+    public function __construct($url, $content);
 
     public function parse();
 

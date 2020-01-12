@@ -12,54 +12,45 @@ abstract class BaseParser implements ParserInterface
     protected $tag_regex;
     protected $tag_replace_string;
     protected $name;
+    protected $url;
 
-    public function __construct($content)
+    public function __construct($url, $content)
     {
         $this->content = $content;
+        $this->url = $url;
         $this->result = array();
     }
 
     public function parse()
     {
-
-        if (!$this->tag_regex) {
-            throw new \RuntimeException('tag regex is empty!');
-        }
-
-        $tags = null;
-        preg_match_all($this->tag_regex, $this->content, $tags);
-
-        foreach ($tags as $img_tag) {
-            $this->parseTagData($img_tag);
+        foreach ($this->src_regex as $regex) {
+            $this->parseTagData($regex);
         }
 
         return $this->result;
     }
 
     /**
-     * @param array $tag_data
+     * @param array $regex
      *
      * @return array
      */
-    public function parseTagData(array $tag_data)
+    public function parseTagData(string $regex)
     {
 
-        if (!$this->src_regex) {
+        if (!$regex) {
             throw new RuntimeException('empty src regex!');
         }
 
-        $matches = [];
+        preg_match_all(
+                $regex,
+                $this->content,
+                $matches,
+                PREG_UNMATCHED_AS_NULL
+        );
 
-        foreach ($tag_data as $tag_description) {
-            $matches = [];
-            preg_match(
-                    $this->src_regex,
-                    $tag_description,
-                    $matches,
-                    PREG_UNMATCHED_AS_NULL
-            );
-            $this->getLinksFromTag($matches);
-        }
+        $this->getLinksFromTag($matches[0] ?? []);
+
 
         return $matches;
     }
@@ -67,8 +58,10 @@ abstract class BaseParser implements ParserInterface
     /**
      * @param array $matches
      */
-    public function getLinksFromTag(array $matches): void
-    {
+    public
+    function getLinksFromTag(
+            array $matches
+    ): void {
         foreach ($matches as $match) {
 
             $url = $this->cleanUrlString($match);
@@ -77,13 +70,7 @@ abstract class BaseParser implements ParserInterface
                 continue;
             }
 
-            $exploded = explode(' ', $url);
-
-            if (!count($exploded)) {
-                continue;
-            }
-
-            $this->processTagData($exploded);
+            $this->processTagData($url);
 
         }
     }
@@ -93,8 +80,10 @@ abstract class BaseParser implements ParserInterface
      *
      * @return string
      */
-    private function cleanUrlString($match): string
-    {
+    private
+    function cleanUrlString(
+            $match
+    ): string {
         foreach ($this->tag_replace_string as $value) {
             $match = str_replace($value, '', $match);
         }
@@ -105,33 +94,50 @@ abstract class BaseParser implements ParserInterface
     /**
      * @param array $exploded
      */
-    private function processTagData(array $exploded): void
-    {
-
-        $data = $exploded[0];
+    private
+    function processTagData(
+            string $data
+    ): void {
         $result = $this->validate($data);
 
         if (!$result) {
             return;
         }
 
-        if (in_array($data, $this->result)) {
+        if (in_array($result, $this->result)) {
             return;
         }
 
-        $this->result[] = $data;
+        $this->result[] = $result;
 
     }
 
-    public function validate($data)
-    {
+    public
+    function validate(
+            $data
+    ) {
+
         $data = filter_var($data, FILTER_SANITIZE_URL);
-        $res = filter_var($data, FILTER_VALIDATE_URL);
+        $validating_result = filter_var($data, FILTER_VALIDATE_URL);
 
-        return $res;
+        if ($validating_result) {
+            return $validating_result;
+        }
+
+        $quotes_escaped = str_replace('//', '', $data);
+
+        $quotes_escaped_result = filter_var($quotes_escaped, FILTER_VALIDATE_URL);
+        if ($quotes_escaped_result) {
+            return $quotes_escaped_result;
+        }
+
+        $validating_result = $quotes_escaped;
+
+        return $validating_result;
     }
 
-    public function showResult()
+    public
+    function showResult()
     {
         echo "\n--- Result of ".self::NAME." parsing --- \n";
         foreach ($this->result as $value) {
@@ -139,12 +145,14 @@ abstract class BaseParser implements ParserInterface
         }
     }
 
-    public function getResult()
+    public
+    function getResult()
     {
         return $this->result;
     }
 
-    public function getName()
+    public
+    function getName()
     {
         return $this->name;
     }

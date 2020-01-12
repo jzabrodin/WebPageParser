@@ -7,12 +7,11 @@ class LinksParser extends BaseParser
 {
     public $content;
 
-    public function __construct($content)
+    public function __construct($url, $content)
     {
-        parent::__construct($content);
-        $this->tag_regex = '/<a .{0,1000}>/';
-        $this->src_regex = '/(href=".{0,}">)/';
-        $this->tag_replace_string = ['href=', '"', '/>'];
+        parent::__construct($url, $content);
+        $this->src_regex = ["/href=\".*?\"/"];
+        $this->tag_replace_string = ['href=', '"', '////'];
         $this->name = 'Links';
     }
 }

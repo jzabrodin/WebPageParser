@@ -77,8 +77,6 @@ class RunnerTest extends PHPUnit\Framework\TestCase
 
         $this->correct_urls = [
                 "https://netpeak.ua/",
-                "https://netpeak.ua/services/",
-                "https://citrus.ua/actions/new-year",
         ];
     }
 }
