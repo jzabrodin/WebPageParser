@@ -31,7 +31,7 @@ class Report
 
         $files = scandir($index_data_dir);
         echo "---- data for $this->domain ---- ";
-        print_r($files);
+//        print_r($files);
 
         foreach ($files as $file) {
 
@@ -60,12 +60,12 @@ class Report
                 continue;
             }
 
-            $domain = $this->getDomain($object);
+            $result = $this->checkDomain($object);
 
-            if ($domain === $this->domain) {
+            if ($result) {
                 $this->printData($object);
-            } else {
-                echo "\nsomething wrong $this->domain didnt equal $domain\n";
+//            else{
+//                echo "\nsomething wrong $this->domain didnt equal $domain\n";
             }
 
         }
@@ -86,21 +86,12 @@ class Report
      *
      * @return mixed
      */
-    private function getDomain($object)
+    private function checkDomain($object)
     {
         $url = (string)$object->url;
-        $filtered = str_replace('/', '.', $url);
-        var_dump($filtered);
-        $url_parts_array = explode('.', $filtered);
-        if (strpos($filtered[0], 'http') === false) {
-            $domain = $url_parts_array[2] ?? '';
-            $country = $url_parts_array[3] ?? '';
-        } else {
-            $domain = $url_parts_array[3] ?? '';
-            $country = $url_parts_array[4] ?? '';
-        }
 
-        return $domain.($country ? '.'.$country : '');
+
+        return strpos($url, $this->domain) !== false;
     }
 
     private function printData($object)
