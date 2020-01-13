@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../Runner.php';
+require_once dirname(__DIR__).'/src/Runner.php';
 require_once __DIR__ . '/../src/Files.php';
 
 
@@ -48,6 +48,7 @@ class RunnerTest extends PHPUnit\Framework\TestCase
             $runner = new Files($url);
             $result = $runner->savePageContent("\n hello!!! \n" . $url);
             $this->assertNotFalse($result);
+            unlink($runner->getFileName());
         }
     }
 
@@ -77,6 +78,7 @@ class RunnerTest extends PHPUnit\Framework\TestCase
 
         $this->correct_urls = [
                 "https://netpeak.ua/",
+                "https://netpeak.ua/services/",
         ];
     }
 }

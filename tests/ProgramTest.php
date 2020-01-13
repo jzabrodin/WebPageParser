@@ -13,7 +13,7 @@ class RunnerTest extends PHPUnit\Framework\TestCase
      */
     public function report()
     {
-        $report = new Report('netpeak');
+        $report = new Report('netpeak.ua');
         $report->printReport();
     }
 

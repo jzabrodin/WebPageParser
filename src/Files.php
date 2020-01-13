@@ -21,7 +21,7 @@ class Files
      * @param $filename
      * @return string
      */
-    private function getFileName(): string
+    public function getFileName(): string
     {
         $filename = $this->getBaseFilename();
 
@@ -84,12 +84,12 @@ class Files
     private function saveSerializedData($result): void
     {
         $name_for_serialized = $this->getFileNameForSerialized();
-        $data = serialize($result);
+        $data = json_encode($result);
         file_put_contents($name_for_serialized, $data);
         echo "\n\n serialized data saved in : \n $name_for_serialized \n\n";
 
         $name_for_index = $this->getFileNameForIndex();
-        $data = serialize(
+        $data = json_encode(
             [
                 'url' => $this->pageUrl,
                 'filename' => $name_for_serialized

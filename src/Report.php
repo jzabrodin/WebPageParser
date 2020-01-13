@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/Files.php';
+require_once __DIR__.'/Files.php';
 
 class Report
 {
@@ -13,7 +13,15 @@ class Report
 
     public function printReport()
     {
-        $index_data_dir = realpath(__DIR__ . '/storage/index_data/');
+        $index_data_dir = dirname(__DIR__).'/storage/index_data';
+
+        if (!file_exists($index_data_dir)) {
+            echo "\ndirectory $index_data_dir didnt exist\n";
+
+            return;
+        }
+
+        echo "\n Trying to open files in : $index_data_dir \n";
 
         if (empty($index_data_dir)) {
             var_dump(__file__);
@@ -23,78 +31,97 @@ class Report
 
         $files = scandir($index_data_dir);
         echo "---- data for $this->domain ---- ";
+        print_r($files);
 
         foreach ($files as $file) {
-            try {
-                $current_file = $index_data_dir . '/' . $file;
-                $data = $this->getFileData($current_file);
-                $object = (object)unserialize($data);
 
-                if (!property_exists($object, 'url')) {
-                    continue;
-                }
-
-                $domain = $this->getDomain($object);
-
-                if ($domain === $this->domain) {
-                    $this->printData($object);
-                }
-
-
-            } catch (Exception $e) {
+            if ($file === '.' || $file === '..') {
                 continue;
             }
+
+            $current_file = $index_data_dir.'/'.$file;
+
+            if (!file_exists($current_file)) {
+                echo "\n$current_file didnt exist\n";
+                continue;
+            }
+
+            echo "\nreading $current_file\n";
+            $data = $this->getFileData($current_file);
+            try {
+                $object = json_decode($data);
+            } catch (Exception $exception) {
+                echo $exception->getMessage();
+                continue;
+            }
+
+            if (!property_exists($object, 'url')) {
+                echo "\nproperty url didnt exist\n";
+                continue;
+            }
+
+            $domain = $this->getDomain($object);
+
+            if ($domain === $this->domain) {
+                $this->printData($object);
+            } else {
+                echo "\nsomething wrong $this->domain didnt equal $domain\n";
+            }
+
         }
     }
 
     /**
      * @param string $current_file
-     * @return array
+     *
+     * @return string
      */
     private function getFileData(string $current_file)
     {
-        $file = fopen($current_file, 'rb');
-        $data = fread($file, filesize($current_file));
-        fclose($file);
-        return $data;
+        return file_get_contents($current_file);
     }
 
     /**
      * @param $object
+     *
      * @return mixed
      */
     private function getDomain($object)
     {
         $url = (string)$object->url;
-        $exploded = explode('.', $url);
-        if (strpos($exploded[0], 'http') === false) {
-            $domain = explode('/', $exploded[0])[1];
+        $filtered = str_replace('/', '.', $url);
+        var_dump($filtered);
+        $url_parts_array = explode('.', $filtered);
+        if (strpos($filtered[0], 'http') === false) {
+            $domain = $url_parts_array[2] ?? '';
+            $country = $url_parts_array[3] ?? '';
         } else {
-            $domain = explode('/', $exploded[0])[2];
+            $domain = $url_parts_array[3] ?? '';
+            $country = $url_parts_array[4] ?? '';
         }
-        return $domain;
+
+        return $domain.($country ? '.'.$country : '');
     }
 
     private function printData($object)
     {
-        try {
-            if (!file_exists($object->filename)) {
-                echo "\n sorry file $object->filename doesnt exist \n";
-            }
-
-
-            $data = (object)unserialize($this->getFileData($object->filename));
-            echo "\nData for url : $object->url";
-
-            foreach ($data as $key => $value) {
-                echo "\n $key count is " . count($value);
-            }
-
-            echo "\n ---- Done $this->domain . -----";
-        } catch (Exception $e) {
-
+        if (!file_exists($object->filename)) {
+            echo "\n file $object->filename doesn't exist \n";
         }
 
+
+        $file_data = $this->getFileData($object->filename);
+        $data = (object)json_decode(
+                $file_data
+        );
+
+        echo "\nData for url : $object->url";
+
+        foreach ($data as $key => $value) {
+            echo "\n $key count is ".count($value);
+        }
+
+        echo "\n ---- Done $this->domain . -----";
     }
 
 }
